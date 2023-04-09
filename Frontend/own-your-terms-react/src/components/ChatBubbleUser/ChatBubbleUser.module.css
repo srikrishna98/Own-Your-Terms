@@ -1,0 +1,19 @@
+.ChatBubbleUser {
+    display: flex;
+    width: 60%;
+    margin-left: auto;
+    margin-right: 10px;
+}
+
+.ChatBubbleUserText{
+    display: flex;
+    justify-content: justify;
+    word-wrap: break-word;
+    width: 100%;
+    padding: 1em;
+    border-radius: 15px;
+    background:#015C4B;
+    color: white;
+    font-size: 1em;
+}
+
