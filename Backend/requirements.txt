@@ -112,9 +112,6 @@ jupyter_core==5.0.0
 jupyterlab-pygments==0.2.2
 jupyterlab-widgets==3.0.3
 kiwisolver==1.4.4
-label-studio==1.7.0
-label-studio-converter==0.0.48rc0
-label-studio-tools==0.0.1
 langchain==0.0.135
 launchdarkly-server-sdk==7.5.0
 libsumo==1.14.1
@@ -160,7 +157,6 @@ prompt-toolkit==3.0.32
 proto-plus==1.22.2
 protobuf==3.20.3
 psutil==5.9.4
-psycopg2-binary==2.9.1
 ptyprocess==0.7.0
 pure-eval==0.2.2
 pyasn1==0.4.8
@@ -172,7 +168,6 @@ Pygments==2.14.0
 pyparsing==3.0.9
 pyRFC3339==1.1
 pyrsistent==0.19.3
-python-dateutil==2.8.1
 python-dotenv==1.0.0
 python-json-logger==2.0.4
 pytz==2022.7.1
