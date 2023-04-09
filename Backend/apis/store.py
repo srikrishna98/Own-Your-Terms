@@ -12,27 +12,46 @@ openai.organization = "org-Ddi6ZSgWKe8kPZlpwd6M6WVe"
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
+
 class Store(Resource):
     def post(self):
         data = json.loads(request.get_data())
         linkID = data['link']
+        pageTitle = data['title']
+        userid = data['userid']
         data = data['TOS']
-        llama_doc = Document(data, doc_id=linkID)
+        file_name = hash(userid + pageTitle)
+        print(file_name)
+        #dict_obj = {"userid":userid,"pageTitle":pageTitle}
+        alreadyPresentList = []
+        userDataJson = {}
+        if os.path.exists("./userData.json"):
+            with open('./userData.json','r') as userDataJsonFile:
+                userDataJson = json.loads(userDataJsonFile.read())
+                if userid in userDataJson:
+                    alreadyPresentList = userDataJson[userid]
+                    if pageTitle not in alreadyPresentList:
+                        alreadyPresentList.append(pageTitle)
+        else:
+            alreadyPresentList.append(pageTitle)
+        userDataJson[userid] = alreadyPresentList
+        print("New data : ",str(userDataJson))
+        userDataJsonFileWrite = open('./userData.json',"w")
+        userDataJsonFileWrite.write(json.dumps(userDataJson))
+            
+        with open(str(file_name),'w') as fl:
+            fl.write(data)
+        llama_doc = Document(data,doc_id=linkID)
         index = GPTSimpleVectorIndex.from_documents(documents=[llama_doc])
         index.update(llama_doc)
         question = "Highlight atleast 5 red flags in this terms and conditions."
         res = index.query(question)
         if os.path.exists("database.json"):
-            existing_index = GPTSimpleVectorIndex.load_from_disk(
-                'database.json')
-
+            existing_index = GPTSimpleVectorIndex.load_from_disk('database.json')
             existing_index.update(llama_doc)
             existing_index.save_to_disk("database.json")
         else:
             index.save_to_disk("database.json")
-        statements = str(res).strip().split('\n')
-        print(statements)
-        response = {
-            "sentences": statements
-        }
-        return response, 200
+        print(res)
+        return str(res).split('\n'), 200
+
