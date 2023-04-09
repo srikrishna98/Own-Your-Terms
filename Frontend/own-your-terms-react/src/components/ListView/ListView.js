@@ -14,36 +14,8 @@ import { useParams } from "react-router-dom";
 import { BACKEND_URL, GET_TITLES_URL, GET_DOCUMENT_URL } from "../../config";
 import axios from "axios";
 
-const tempData = [
-  {
-    id: "1",
-    title: "Srini frontend coder",
-    text: "Srini Rocks",
-  },
-  {
-    id: "2",
-    title: "Sriki frontend coder",
-    text: "Sriki Rocks",
-  },
-  {
-    id: "3",
-    title: "Bhar frontend coder",
-    text: "Gav Rocks",
-  },
-  {
-    id: "4",
-    title: "Cibi frontend coder",
-    text: "Cibi Rocks",
-  },
-  {
-    id: "5",
-    title: "Amal frontend coder",
-    text: "Amal Rocks",
-  },
-];
-
 function fetchInit(docid) {
-  if (!docid) return "Terms and Conditions";
+  if (!docid) return "t-mobile Terms and Conditions";
   return docid;
 }
 
@@ -51,7 +23,7 @@ const Chat = () => {
   const { docid } = useParams();
   const [docs, setDocs] = useState([]);
   const [activeDoc, setActiveDoc] = useState();
-  const [activeId, setActiveId] = useState(fetchInit(docid));
+  const [activeId, setActiveId] = useState(docid);
   const [userid, setUserId] = useState(localStorage.getItem("userid"));
 
   useEffect(() => {
@@ -63,6 +35,8 @@ const Chat = () => {
   }, []);
 
   useEffect(() => {
+    if (docs.length == 0) return;
+    if (activeId === undefined) setActiveId(docs[0]);
     axios
       .post(BACKEND_URL + GET_DOCUMENT_URL, {
         user_id_title: userid + activeId,
@@ -86,7 +60,9 @@ const Chat = () => {
                 >
                   <div className={styles.individualFile}>
                     <Card>
-                      <CardActions>
+                      <CardContent
+                        className={doc == activeId ? styles.activeLeft : ""}
+                      >
                         <Button variant="text" className={styles.buttonContent}>
                           <Typography
                             sx={{ wordBreak: "break-word" }}
@@ -96,7 +72,7 @@ const Chat = () => {
                             {doc}
                           </Typography>
                         </Button>
-                      </CardActions>
+                      </CardContent>
                     </Card>
                   </div>
                 </ListItem>
