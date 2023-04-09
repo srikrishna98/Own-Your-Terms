@@ -33,12 +33,14 @@ def get_title(title):
         return title
 
 
-class Store(Resource):
+class Upload(Resource):
     def post(self):
-        data = json.loads(request.get_data())
+        data = {}
         userid = data.get('userid', 'cibi')
-        file = request.files['file']
+        print(request.files)
+        file = request.files['userfile']
         file.save(userid + file.filename)
+        print(file)
         reader = PdfReader(userid + file.filename)
         data = ""
         for page in reader.pages:
