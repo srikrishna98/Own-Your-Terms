@@ -1,0 +1,29 @@
+{
+    "manifest_version": 3,
+    "name": "Own your terms",
+    "description": "Analyse your Terms and conditions for red flags, and store them",
+    "version": "1.0",
+    "background":{
+        "service_worker": "scripts/background.js"
+    },
+    "content_scripts":[{
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "scripts/jquery.min.js",
+        "scripts/mark.min.js"
+      ],
+      "run_at": "document_end",
+      "all_frames": false
+    }],
+    "action": {
+        "default_popup": "ownIt.html"
+    },
+    "permissions":[
+        "activeTab",
+        "scripting",
+        "storage"
+    ]
+}
