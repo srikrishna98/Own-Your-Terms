@@ -36,10 +36,13 @@ const Chat = () => {
 
   useEffect(() => {
     if (docs.length == 0) return;
-    if (activeId === undefined) setActiveId(docs[0]);
+    console.log(activeId);
+    if (activeId === undefined) {
+      setActiveId(docs[0]);
+    }
     axios
       .post(BACKEND_URL + GET_DOCUMENT_URL, {
-        user_id_title: userid + activeId,
+        user_id_title: userid + (activeId || docs[0]),
       })
       .then((response) => {
         setActiveDoc(response.data.response);
