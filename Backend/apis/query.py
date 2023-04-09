@@ -15,7 +15,7 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
 def retrieveKeystore() -> dict:
-    json_path = "/Users/bhargavkrish/Desktop/USC/hackathon/Own-Your-Terms/Backend/database.json"
+    json_path = "./database.json"
     with open(json_path, 'r') as j:
         database_json = json.loads(j.read())
     if "vector_store" in database_json:
@@ -38,12 +38,11 @@ class Query(Resource):
         if os.path.exists("database.json"):
             existing_index = GPTSimpleVectorIndex.load_from_disk(
                 'database.json')
-            safety_query = "Make coherant answers and seperate individual points by semi-colon."
-            res = existing_index.query(data+safety_query)
-            # print(res.get_formatted_sources(length=10000))
+            res = existing_index.query(data)
+            print(res.get_formatted_sources(length=10000))
             sources = res.get_formatted_sources(length=10000)
             text_id_strings = re.findall(r'\((.*?)\)', sources)
-            # print(text_id_strings)
+            print(text_id_strings)
             text_ids = []
             doc_ids = []
             for text_id_string in text_id_strings:
@@ -60,17 +59,11 @@ class Query(Resource):
                 if t in keystore:
                     print("Keystore: "+keystore[t])
                     doc_ids.append(keystore[t])
-
-            # print(doc_ids)
-            print("Idhu res:\n ")
-            print(res)
-            print("Idhu dict:\n ")
-            respo = res.response
-            respo = respo.rstrip("\n")
-            respo = respo.lstrip("\n")
-            print(respo)
-            dictt = {"result": str(respo).split(";"), "urls": doc_ids}
-            # print(str(dictt))
-            return json.dumps(dictt), 200
+            answer = str(res).strip().replace("\n", "<br/>")
+            response = {
+                "response":  answer
+            }
+            print(doc_ids)
+            return response, 200
         else:
             return "Database not found", 404
