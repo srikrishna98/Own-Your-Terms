@@ -27,24 +27,48 @@ function containsTOS(text) {
 // External API call methods
 //
 // *****************************
-
 function getAnalysis(sentences) {
   let baseUrl = hostedURL + storeURL;
-
-  var urlParams = [
-    {
-      TOS_Data: sentences,
-    },
-  ];
-
-  return fetch(baseUrl, {
-    method: "POST",
-    body: JSON.stringify(urlParams),
-    headers: new Headers({ "Content-Type": "text/plain" }),
-  })
-    .then((response) => response.json())
-    .catch((error) => {
-      throw error;
+  var userid, url, title;
+  return chrome.storage.local
+    .get("userid")
+    .then((storage) => {
+      userid = storage["userid"];
+      console.log("userid: " + JSON.stringify(userid));
+      return chrome.storage.local.get("url");
+    })
+    .then((items) => {
+      url = items.url;
+      return Promise.all([
+        chrome.storage.local.remove("url"),
+        chrome.storage.local.get("title"),
+      ]);
+    })
+    .then((results) => {
+      console.log(results);
+      let items = results[1];
+      title = items.title;
+      var urlParams = {
+        TOS: sentences,
+        link: url,
+        title: title,
+        userid: userid,
+      };
+      console.log(urlParams);
+      return Promise.all([
+        chrome.storage.local.remove("title"),
+        fetch(baseUrl, {
+          method: "POST",
+          body: JSON.stringify(urlParams),
+          headers: new Headers({ "Content-Type": "text/plain" }),
+        })
+          .then((response) => {
+            return response.json();
+          })
+          .catch((error) => {
+            throw error;
+          }),
+      ]);
     });
 }
 
@@ -101,24 +125,7 @@ function filterSentence(sentence) {
 function cleanupSentence(sentence) {
   if (sentence.length > 1000) {
     return "";
-  } // get rid of long ones (likely code)
-
-  // Let's identify some strings that indicate parsing has messed up
-  /*
-    var urlCount = (sentence.match(/Url/g) || []).length; // If encoding Urls in page
-    var imgCount = (sentence.match(/img|svg|png/gi) || []).length; // If code embedding images
-    var slashCount = (sentence.match(/\//g) || []).length; // If url string(s)
-    var colonCount = (sentence.match(/\:/g) || []).length; // If url string(s)
-    var quoteCount = (sentence.match(/\"/g) || []).length; // If url string(s)
-    */
-
-  // if (urlCount > 0) { return ""; }
-  // if (imgCount > 0) { return ""; }
-  // if (slashCount > 3) { return ""; }
-  // if (colonCount > 3) { return ""; }
-  // if (quoteCount > 6) { return ""; }
-
-  //var clean = sentence.replace(/<(div|\/div|b|\/b|br|\/br|li|\/li|ul|\/ul|p|\/p)[^>]*>/, ' ');
+  }
   var clean = sentence.replace(/<[^>]*>/gi, ""); // remove all HTML tags
   clean = clean.replace(/[^a-z .,?!-:;\"\']/gi, " "); // Replace \s with ' ', see what happens
   clean = clean.replace(/&.t;/g, "");
@@ -163,6 +170,7 @@ function DOMtoString(document_root) {
 
   // three maps:
   var keptSentences = {}; // categories -> list of cleaned sentences (for display)
+  var hugeSentence = "";
   var cleanToRaw = {}; // cleaned sentence -> raw sentence (for highlighting)
   var hashes = {}; // string hashes
 
@@ -202,6 +210,7 @@ function DOMtoString(document_root) {
             if (!hashes[filterFound].includes(thisHash)) {
               hashes[filterFound].push(thisHash);
               keptSentences[filterFound].push(cleanSentence);
+              hugeSentence += " " + cleanSentence;
               numSentences += 1;
             }
           }
@@ -209,24 +218,8 @@ function DOMtoString(document_root) {
       }
     }
   }
-  console.log(numSentences);
-  console.log(keptSentences["*"]);
 
-  return getAnalysis(keptSentences)
-    .then(function (res) {
-      if (res.redflags === null) {
-        return {
-          sentences: null,
-        };
-      } else {
-        return {
-          sentences: res,
-        };
-      }
-    })
-    .catch((err) => {
-      throw err;
-    });
+  return getAnalysis(hugeSentence);
 }
 
 function hashCode(s) {
@@ -258,12 +251,14 @@ chrome.runtime.onMessage.addListener(function (request, sender) {
 
 DOMtoString(document)
   .then((res) => {
+    [_, res] = res;
     chrome.runtime.sendMessage({
       action: "getSource",
       source: res,
     });
   })
   .catch((err) => {
+    console.log(err);
     chrome.runtime.sendMessage({
       action: "getSource",
       source: null,
