@@ -1,63 +1,67 @@
 .ListView {
-    text-align: center;
-    width: 100%;
-    height: 100%;
+  text-align: center;
+  width: 100%;
+  height: 100%;
 }
 
-.gridBox{
-    border: 2px solid black;
+.gridBox {
+  border: 2px solid black;
 }
 
-.buttonContent{
-    text-transform: unset !important;
-    width: 100%;
+.buttonContent {
+  text-transform: unset !important;
+  width: 100%;
+}
+.titleContent {
+}
+.div-content {
+  word-wrap: break-word;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border: solid 1px blue;
 }
 
-.div-content{
-    display: flex;
-    flex-direction: column;
-    width: 100%;    
-    border: solid 1px blue;
+.cardStyle {
+  border-spacing: 1em;
 }
 
-.cardStyle{
-    border-spacing: 1em;
+.termsContent {
+  overflow: scroll;
+  text-align: justify;
+  height: 650px;
+  width: 98%;
 }
 
-.termsContent{
-    overflow: scroll;
-    height: 650px;
-    width: 98%;
-
+.filesList {
+  overflow: auto;
+  width: 100%;
+  height: 95%;
 }
 
-.filesList{
-    overflow: auto;
-    width: 100%;
-    height: 95%;
+.leftGrid {
 }
 
-.leftGrid{
-    
+.individualFile {
+  width: 100%;
 }
 
-.individualFile{
-    width: 100%;   
-    
+.currentFile {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
-.currentFile{
-    display: flex;
-    flex-direction: column;
-    width: 100%;
+.activeLeft {
+  background-color: cornflowerblue;
+  color: aliceblue;
 }
-
-.currentFileName{
-    display: flex;
-    width: 98%;
-    height: 10%;
-    justify-content: center;
-    margin-top: 5px;
-    margin-bottom: 10px;
-    margin-right: 10px;
+.currentFileName {
+  display: flex;
+  width: 98%;
+  height: 10%;
+  justify-content: center;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  margin-right: 10px;
 }

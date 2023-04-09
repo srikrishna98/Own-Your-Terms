@@ -23,7 +23,7 @@ const ChatView = () => {
     Loading({
       title: "Crunching your data",
       text: "Please wait...",
-      theme: "dark",
+      progress: false,
     });
     axios.post(BACKEND_URL + QUERY_URL, { query: val }).then((response) => {
       setMessage([
@@ -47,9 +47,13 @@ const ChatView = () => {
         <div>
           {messages.map((message, index) =>
             message.type === 0 ? (
-              <ChatBubbleRobot message={message.message} URLs={message?.URLs} />
+              <ChatBubbleRobot
+                message={message.message}
+                URLs={message?.URLs}
+                key={index}
+              />
             ) : (
-              <ChatBubbleUser message={message.message} />
+              <ChatBubbleUser message={message.message} key={index} />
             )
           )}
         </div>
@@ -60,7 +64,6 @@ const ChatView = () => {
             maxRows={1}
             aria-label="query-text"
             placeholder="Type in your query"
-            defaultValue=""
             style={{ height: 50 }}
             className={styles.textBox}
             value={val}
