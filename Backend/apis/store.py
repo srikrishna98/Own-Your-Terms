@@ -20,7 +20,7 @@ class Store(Resource):
         pageTitle = data['title']
         userid = data['userid']
         data = data['TOS']
-        file_name = hash(userid + pageTitle)
+        file_name = str(hash(userid + pageTitle))+".txt"
         print(file_name)
         #dict_obj = {"userid":userid,"pageTitle":pageTitle}
         alreadyPresentList = []
@@ -39,7 +39,7 @@ class Store(Resource):
         userDataJsonFileWrite = open('./userData.json',"w")
         userDataJsonFileWrite.write(json.dumps(userDataJson))
             
-        with open(str(file_name),'w') as fl:
+        with open(file_name,'w') as fl:
             fl.write(data)
         llama_doc = Document(data,doc_id=linkID)
         index = GPTSimpleVectorIndex.from_documents(documents=[llama_doc])
