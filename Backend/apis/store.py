@@ -24,6 +24,12 @@ class Store(Resource):
         #index.insert(llama_doc)
         question = "Highlight atleast 5 red flags in this terms and conditions."
         res = index.query(question)
+        if os.path.exists("database.json"):
+            existing_index = GPTChromaIndex.load_from_disk('database.json')
+            existing_index.insert(llama_doc)
+            existing_index.save_to_disk("database.json")
+        else:
+            index.save_to_disk("database.json")
         print(res)
 
 
