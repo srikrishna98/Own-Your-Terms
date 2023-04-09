@@ -19,7 +19,7 @@ class Store(Resource):
         pageTitle = data['title']
         userid = data['userid']
         data = data['TOS']
-        file_name = hash(userid + pageTitle)
+        file_name = str(hash(userid + pageTitle))+".txt"
         print(file_name)
         #dict_obj = {"userid":userid,"pageTitle":pageTitle}
         alreadyPresentList = []
