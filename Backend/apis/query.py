@@ -1,5 +1,5 @@
 from flask_restx import Resource
-from flask import request, render_template, Response
+from flask import request, render_template, Response,jsonify
 import requests
 import openai
 import os
@@ -37,11 +37,12 @@ class Query(Resource):
         res = ""
         if os.path.exists("database.json"):
             existing_index = GPTSimpleVectorIndex.load_from_disk('database.json')
-            res = existing_index.query(data)
-            print(res.get_formatted_sources(length=10000))
+            safety_query = "Make coherant answers and seperate individual points by semi-colon."
+            res = existing_index.query(data+safety_query)
+            # print(res.get_formatted_sources(length=10000))
             sources = res.get_formatted_sources(length=10000)
             text_id_strings = re.findall(r'\((.*?)\)',sources)
-            print(text_id_strings)
+            # print(text_id_strings)
             text_ids = []
             doc_ids = []
             for text_id_string in text_id_strings:
@@ -50,7 +51,7 @@ class Query(Resource):
                     text_ids.append(text_id)
                     print(text_id)
             keystore = retrieveKeystore()
-            print(keystore)
+            # print(keystore)
             for t in text_ids:
                 print(t)
                 t = t.lstrip(" ")
@@ -59,8 +60,17 @@ class Query(Resource):
                     print("Keystore: "+keystore[t])
                     doc_ids.append(keystore[t])
                             
-            print(doc_ids)
-            return str(res),200
+            # print(doc_ids)
+            print("Idhu res:\n ")
+            print(res)
+            print("Idhu dict:\n ")
+            respo = res.response
+            respo = respo.rstrip("\n")
+            respo = respo.lstrip("\n")
+            print(respo)
+            dictt = {"result":str(respo).split(";"),"urls":doc_ids}
+            #print(str(dictt))
+            return json.dumps(dictt),200
         else:
             return "Database not found", 404
     
