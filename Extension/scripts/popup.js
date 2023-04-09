@@ -4,8 +4,28 @@
 var searchResults = null;
 
 // helper function to add text to correct subdivision
+
+function displayLoader() {
+    let textSpan = document.getElementById("myDiv");
+    textSpan.innerHTML = `
+    <div class="redFlagFound pb-2" style="height: 300px;text-align:center">
+    <span>Loading red flags</span><br/>
+    <img src="${chrome.runtime.getURL("SVG/loading.svg")}" style="height:100px;width:100px" />
+    </div>
+    `
+}
+
+
+
 function displayText(text) {
   var textSpan = document.getElementById("myDiv");
+  textSpan.innerHTML = `
+  <div class="redFlagFound pb-2">
+    <i style="color: red">&#9888;</i>
+      <span>Here are a few redflags I found</span>
+    <i style="color: red">&#9888;</i>
+  </div>
+  `
   console.log(text);
   for (let i = 0; i < text.length; i = i + 1) {
     var redflagDiv = document.createElement("div");
@@ -73,6 +93,7 @@ chrome.runtime.onMessage.addListener(function (request, sender) {
 function onWindowLoad() {
   var btn = document.querySelector("#ownItBtn");
   var my_tabid = null;
+  displayLoader();
   chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
     my_tabid = tabs[0].id;
 
