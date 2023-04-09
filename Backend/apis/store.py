@@ -3,44 +3,54 @@ from flask import request, render_template, Response
 import openai
 import os
 import json
-from llama_index import GPTChromaIndex, GPTSimpleVectorIndex
+from llama_index import GPTSimpleVectorIndex
 from llama_index import Document
-
+from furl import furl
 
 os.environ["OPENAI_API_KEY"] = "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"
 openai.organization = "org-Ddi6ZSgWKe8kPZlpwd6M6WVe"
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
+def get_domain(link):
+    print("link", link)
+    f = furl(link)
+    host = f.host
+    tld = host.split(".")
+    if tld[0] == "www":
+        return tld[1]
+    else:
+        return tld[0]
+
 class Store(Resource):
     def post(self):
         data = json.loads(request.get_data())
-        linkID = data['link']
+        linkID = get_domain(data['link'])
         pageTitle = data['title']
         userid = data['userid']
         data = data['TOS']
-        file_name = str(hash(userid + pageTitle))+".txt"
-        print(file_name)
+        unique_doc = linkID + " " + pageTitle
+        file_name = str(hash(userid + unique_doc)) + ".txt"
         #dict_obj = {"userid":userid,"pageTitle":pageTitle}
         alreadyPresentList = []
         userDataJson = {}
         if os.path.exists("./userData.json"):
-            with open('./userData.json','r') as userDataJsonFile:
+            with open('./userData.json', 'r') as userDataJsonFile:
                 userDataJson = json.loads(userDataJsonFile.read())
                 if userid in userDataJson:
                     alreadyPresentList = userDataJson[userid]
-                    if pageTitle not in alreadyPresentList:
-                        alreadyPresentList.append(pageTitle)
+                    if unique_doc not in alreadyPresentList:
+                        alreadyPresentList.append(unique_doc)
         else:
-            alreadyPresentList.append(pageTitle)
+            alreadyPresentList.append(unique_doc)
         userDataJson[userid] = alreadyPresentList
         print("New data : ", str(userDataJson))
-        userDataJsonFileWrite = open('./userData.json',"w")
+        userDataJsonFileWrite = open('./userData.json', "w")
         userDataJsonFileWrite.write(json.dumps(userDataJson))
-            
+        userDataJsonFileWrite.close()
         with open(str(file_name), 'w') as fl:
             fl.write(data)
-        llama_doc = Document(data, doc_id=linkID)
+        llama_doc = Document(data, doc_id=userid + "<sep>" + unique_doc)
         index = GPTSimpleVectorIndex.from_documents(documents=[llama_doc])
         index.update(llama_doc)
         question = "Highlight atleast 5 red flags in this terms and conditions."
