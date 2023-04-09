@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import styles from "./ChatBubbleRobot.module.css";
+import { Link } from "react-router-dom";
 
 const ChatBubbleRobot = (props) => {
   let textMessage = props.message;
@@ -13,9 +14,9 @@ const ChatBubbleRobot = (props) => {
           {URLs?.map((url) => (
             <div>
               <br></br>
-              <a className={styles.ChatBubbleRobotUrl} href={url}>
+              <Link className={styles.ChatBubbleRobotUrl} to={url}>
                 Link to Supporting Document
-              </a>
+              </Link>
             </div>
           ))}
         </div>

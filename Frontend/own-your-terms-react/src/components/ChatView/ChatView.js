@@ -29,7 +29,11 @@ const ChatView = () => {
       setMessage([
         ...messages,
         { type: 1, message: val },
-        { type: 0, message: response.data.response },
+        {
+          type: 0,
+          message: response.data.response,
+          URLs: response.data.sources,
+        },
       ]);
       Loading();
     });

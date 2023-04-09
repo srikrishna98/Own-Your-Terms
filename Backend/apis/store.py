@@ -24,12 +24,14 @@ def get_domain(link):
 
 
 def get_title(title):
+    print(title)
+    title_copy = f"{title}"
     f = furl(title)
     host = f.host
-    if host != "":
+    if host is not None:
         return host
     else:
-        return title
+        return title_copy
 
 
 class Store(Resource):
@@ -39,9 +41,10 @@ class Store(Resource):
         pageTitle = get_title(data['title'])
         userid = data['userid']
         data = data['TOS']
+        print(linkID, pageTitle)
         unique_doc = linkID + " " + pageTitle
         file_name = str(hash(userid + unique_doc)) + ".txt"
-        #dict_obj = {"userid":userid,"pageTitle":pageTitle}
+        # dict_obj = {"userid":userid,"pageTitle":pageTitle}
         alreadyPresentList = []
         userDataJson = {}
         if os.path.exists("./userData.json"):
@@ -66,7 +69,8 @@ class Store(Resource):
         question = "Highlight atleast 5 red flags in this terms and conditions."
         res = index.query(question)
         if os.path.exists("database.json"):
-            existing_index = GPTSimpleVectorIndex.load_from_disk('database.json')
+            existing_index = GPTSimpleVectorIndex.load_from_disk(
+                'database.json')
             existing_index.update(llama_doc)
             existing_index.save_to_disk("database.json")
         else:
@@ -75,4 +79,3 @@ class Store(Resource):
             "sentences": str(res).strip().split("\n")
         }
         return response, 200
-
