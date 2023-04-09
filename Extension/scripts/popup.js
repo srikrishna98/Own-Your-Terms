@@ -40,8 +40,9 @@ function showContent() {
 }
 // listen for messages sent by getPagesSource.js
 chrome.runtime.onMessage.addListener(function (request, sender) {
+  console.log(request);
   if (request.action == "getSource") {
-    console.log(request.source);
+    console.log("cibi", request.source);
     if (
       request?.source?.sentences === null ||
       request.source === null ||
@@ -58,7 +59,7 @@ chrome.runtime.onMessage.addListener(function (request, sender) {
       var results = request;
       console.log(results);
       // store the results
-      searchResults = results.source.sentences.redflags;
+      searchResults = results.source.sentences;
       console.log(searchResults);
       // display results
       // for (var category in results["sentences"]) {
@@ -73,40 +74,47 @@ function onWindowLoad() {
   var btn = document.querySelector("#ownItBtn");
   var my_tabid = null;
   chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
-    console.log(tabs[0].url);
-    console.log(tabs[0].id);
     my_tabid = tabs[0].id;
-    chrome.scripting
-      .executeScript({
-        target: { tabId: my_tabid },
-        files: ["scripts/mark.min.js"],
-      })
-      .then(
+
+    chrome.storage.local.set(
+      {
+        url: tabs[0].url,
+        title: tabs[0].title,
+      },
+      () => {
         chrome.scripting
           .executeScript({
             target: { tabId: my_tabid },
-            files: ["scripts/content.js"],
+            files: ["scripts/mark.min.js"],
           })
-          .then(function () {
-            // error catching
-            if (chrome.runtime.lastError) {
-              var textSpan = document.getElementById("myDiv");
-              var span = document.createElement("span");
-              span.innerText =
-                "This page is not supported. Please upload the T&C document in our website.";
-              textSpan.appendChild(span);
-              showErrorMessage();
-            }
-          })
-          .catch(function (err) {
-            var textSpan = document.getElementById("myDiv");
-            var span = document.createElement("span");
-            span.innerText =
-              "This page is not supported. Please upload the T&C document in our website.";
-            textSpan.appendChild(span);
-            showErrorMessage();
-          })
-      );
+          .then(
+            chrome.scripting
+              .executeScript({
+                target: { tabId: my_tabid },
+                files: ["scripts/content.js"],
+              })
+              .then(function () {
+                // error catching
+                if (chrome.runtime.lastError) {
+                  var textSpan = document.getElementById("myDiv");
+                  var span = document.createElement("span");
+                  span.innerText =
+                    "This page is not supported. Please upload the T&C document in our website.";
+                  textSpan.appendChild(span);
+                  showErrorMessage();
+                }
+              })
+              .catch(function (err) {
+                var textSpan = document.getElementById("myDiv");
+                var span = document.createElement("span");
+                span.innerText =
+                  "This page is not supported. Please upload the T&C document in our website.";
+                textSpan.appendChild(span);
+                showErrorMessage();
+              })
+          );
+      }
+    );
   });
 }
 
