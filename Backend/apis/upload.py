@@ -3,7 +3,7 @@ from flask import request, render_template, Response
 import openai
 import os
 import json
-from llama_index import GPTChromaIndex, GPTSimpleVectorIndex
+from llama_index import GPTSimpleVectorIndex
 from llama_index import Document
 
 
@@ -12,14 +12,8 @@ openai.organization = "org-Ddi6ZSgWKe8kPZlpwd6M6WVe"
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
-
 class Upload(Resource):
     def post(self):
-        data = json.loads(request.get_data())
-        linkID = data['link']
-        pageTitle = data['title']
-        userid = data['userid']
-        data = data['TOS']
         file_name = hash(userid + pageTitle)
         print(file_name)
         #dict_obj = {"userid":userid,"pageTitle":pageTitle}

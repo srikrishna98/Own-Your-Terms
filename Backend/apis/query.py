@@ -57,13 +57,13 @@ class Query(Resource):
                 t = t.lstrip(" ")
                 t = t.rstrip(" ")
                 if t in keystore:
-                    print("Keystore: "+keystore[t])
-                    doc_ids.append(keystore[t])
+                    print("Keystore: " + keystore[t])
+                    doc_ids.append(keystore[t].split("<sep>")[1])
             answer = str(res).strip().replace("\n", "<br/>")
             response = {
-                "response":  answer
+                "response":  answer,
+                "sources": [f"/mydocs/{doc_id}" for doc_id in doc_ids]
             }
-            print(doc_ids)
             return response, 200
         else:
             return "Database not found", 404
