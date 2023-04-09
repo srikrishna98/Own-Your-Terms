@@ -17,16 +17,26 @@ def get_domain(link):
     f = furl(link)
     host = f.host
     tld = host.split(".")
-    if tld[0] == "www":
+    if len(tld) > 2:
         return tld[1]
     else:
         return tld[0]
+
+
+def get_title(title):
+    f = furl(title)
+    host = f.host
+    if host != "":
+        return host
+    else:
+        return title
+
 
 class Store(Resource):
     def post(self):
         data = json.loads(request.get_data())
         linkID = get_domain(data['link'])
-        pageTitle = data['title']
+        pageTitle = get_title(data['title'])
         userid = data['userid']
         data = data['TOS']
         unique_doc = linkID + " " + pageTitle
