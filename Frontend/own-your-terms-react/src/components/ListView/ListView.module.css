@@ -1,0 +1,63 @@
+.ListView {
+    text-align: center;
+    width: 100%;
+    height: 100%;
+}
+
+.gridBox{
+    border: 2px solid black;
+}
+
+.buttonContent{
+    text-transform: unset !important;
+    width: 100%;
+}
+
+.div-content{
+    display: flex;
+    flex-direction: column;
+    width: 100%;    
+    border: solid 1px blue;
+}
+
+.cardStyle{
+    border-spacing: 1em;
+}
+
+.termsContent{
+    overflow: scroll;
+    height: 650px;
+    width: 98%;
+
+}
+
+.filesList{
+    overflow: auto;
+    width: 100%;
+    height: 95%;
+}
+
+.leftGrid{
+    
+}
+
+.individualFile{
+    width: 100%;   
+    
+}
+
+.currentFile{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.currentFileName{
+    display: flex;
+    width: 98%;
+    height: 10%;
+    justify-content: center;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    margin-right: 10px;
+}
