@@ -12,7 +12,8 @@ openai.organization = "org-Ddi6ZSgWKe8kPZlpwd6M6WVe"
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
-class Store(Resource):
+
+class Upload(Resource):
     def post(self):
         data = json.loads(request.get_data())
         linkID = data['link']
@@ -34,13 +35,13 @@ class Store(Resource):
         else:
             alreadyPresentList.append(pageTitle)
         userDataJson[userid] = alreadyPresentList
-        print("New data : ", str(userDataJson))
+        print("New data : ",str(userDataJson))
         userDataJsonFileWrite = open('./userData.json',"w")
         userDataJsonFileWrite.write(json.dumps(userDataJson))
             
-        with open(str(file_name), 'w') as fl:
+        with open(str(file_name),'w') as fl:
             fl.write(data)
-        llama_doc = Document(data, doc_id=linkID)
+        llama_doc = Document(data,doc_id=linkID)
         index = GPTSimpleVectorIndex.from_documents(documents=[llama_doc])
         index.update(llama_doc)
         question = "Highlight atleast 5 red flags in this terms and conditions."
@@ -51,8 +52,6 @@ class Store(Resource):
             existing_index.save_to_disk("database.json")
         else:
             index.save_to_disk("database.json")
-        response = {
-            "sentences": str(res).strip().split("\n")
-        }
-        return response, 200
+        print(res)
+        return str(res).split('\n'), 200
 

@@ -101,6 +101,7 @@ function onWindowLoad() {
       {
         url: tabs[0].url,
         title: tabs[0].title,
+        userid: "cibi"
       },
       () => {
         chrome.scripting
