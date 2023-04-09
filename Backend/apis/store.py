@@ -7,6 +7,12 @@ from llama_index import GPTChromaIndex
 from llama_index import Document
 
 import chromadb
+
+os.environ["OPENAI_API_KEY"] = "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"
+openai.organization = "org-Ddi6ZSgWKe8kPZlpwd6M6WVe"
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
+
 # setup Chroma in-memory, for easy prototyping. Can add persistence easily!
 client = chromadb.Client()
 
@@ -31,9 +37,5 @@ class Store(Resource):
         else:
             index.save_to_disk("database.json")
         print(res)
-
-
-        
-
         return res, 200
 
