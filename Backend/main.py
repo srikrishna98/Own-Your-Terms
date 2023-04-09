@@ -12,6 +12,5 @@ cors = CORS(app, resource={
 
 api = Api(app, version='1.0')
 api.add_resource(Store, '/store')
-api.add_resource(ReadTerms,'/readterms')
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True)
